@@ -128,3 +128,113 @@ namespace P2
         }
     }
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Description and Explanation of the process performed by the program
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- The program contains an encapsulated factor class from which objects can be created
+//- The Object encapsulates a factor and if active identifies if the incoming value 
+//- as a multiple of factor and keeps count of all incoming values that are multiples
+//- Resetting the object's state to it's initial state of isActive = true can be done 
+//- if there are two successive entries with same value in the div Function
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Explanation of user interface (input,meaning of input)
+// -User can query the divCount of a factor Object, find out the state of the object ,and reset that state of the object
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Comments on use and Validity (error processing)
+// -If a user's queries can't be satisfied, an error code of 0 is displayed.
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//List of Factor public functions
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- public bool isActive()
+//- public int getSecondInput()
+//- public int Div(int input)
+//- public bool Reset()
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Assumptions
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- IsActive() assumptions:
+// - It can be a type of query by the user.
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- getSecondInput() assumptions:
+// - It can be a type of query by the user.
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Div(input) assumptions:
+//- Div identifies if input is a multiple of factor and keeps track of the number of Multiples factor 
+//- has by incrementing number of multiples everytime a multiple of factor is found.For example lets 
+//- say Factor = 7 and input is 42 , 42 is a multiple of 7 therefore the number of Multiples will
+//- increase by 1
+// - Should reset the state of object when two successive entries are entered for the input .
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Reset() assumptions:
+// - Marks the object as active if it isn't already actve
+// - Should reset the numberOfMultiples and secondInput
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+using System;
+namespace P1
+{
+    public class MainClass
+    {
+        const int SIZE = 20;
+        const int MAX = 4;
+        const int FIRST_INDEX = 0;
+        const int MIN = 1;
+
+        public static void Main()
+        {
+
+            Random random = new Random();
+            Console.WriteLine("Welcome to the user Interface!");
+            Console.WriteLine("In this Interface you will find out if random values(input) are multiples of a factor ");
+            Console.WriteLine("You will find out the state of the object and reset an object if it is not perminately deactivated.");
+            Console.WriteLine();
+            DivQuery(random);
+            Console.WriteLine();
+            Console.WriteLine("Goodbye, thank you for visiting my user Interface");
+        }
+
+        public static void DivQuery(Random random)
+        {
+            Console.WriteLine("Creating Objects ");
+            int[] randInt = new int[SIZE];
+
+            for (int i = 0; i < SIZE; i++)
+            {
+                randInt[i] = (int)random.Next(MIN, MAX);
+            }
+            Factor divObj = new Factor(2);
+            for (int i = 0; i < SIZE; i++)
+            {
+                Console.WriteLine("Previous Input: " + divObj.getSecondInput());
+                Console.WriteLine("Div(" + randInt[i] + ")returns->" + divObj.Div(randInt[i]));
+                TriggeringIsActive(divObj);
+                TriggeringReset(divObj);
+            }
+        }
+
+        public static void TriggeringIsActive(Factor activeObj)
+        {
+            Console.WriteLine("Testing the state of object 1");
+            bool isActive = activeObj.IsActive();
+            Console.WriteLine("If object is isActive,should return true");
+            Console.WriteLine("It returned: " + isActive);
+            Console.WriteLine();
+            
+        }
+
+        public static void TriggeringReset(Factor divObj)
+        {
+            Console.WriteLine("Attempting to reset an inactive " + "object 1  ");
+            bool resetReturnState = divObj.Reset();
+            Console.WriteLine("Resetting a deactivated object should return" + " false.");
+            Console.WriteLine("It actually returned: " + resetReturnState);
+            Console.WriteLine();
+        }
+
+    }
+}
