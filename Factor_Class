@@ -1,0 +1,130 @@
+// Name:     Amal Mohamed
+// Date:     April 3, 2019
+// Filename: Factor.cs
+// Version:  2.0
+//Platform:  Visual Studio 2017
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Implementation Invariant:
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// - Details important Only for Class Designer
+// - Document Design Decisions that are impactful to implementaion choices
+// - FactorValue        - readonly integer
+//                      - assigned to this.factorValue in Constructor
+//                      - used to check if it is divisble by Input from Random Generator
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- NumberOfMultiples   - integer
+//                      - Set to 0 in the Constructor
+//                      - Used to track the number of multiples for factorValue
+//                      - Incremented everytime a multiple of factorValue is found
+//                      - Reset to 0 upon reset call ie. reset()
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- SecondInput         - Integer set to -1 in Constructor
+//                      - Used for tracking the secondInput entered by user (Random Generator)
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- Factor object state - Set to Active upon object creation in the Constructor
+//                      - The current state is returned by isActive()
+//                      - State becomes inactive if previousInput = SecondInput in Div()
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- IsActive() :
+// - Returns the state of the Object
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- getSecondInput():
+// - Returns the secondInput from the client (Random Generator)
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Div(input) :
+// - Returns a boolean isDivisible
+// - isDivisble is true when input is divisible by factorValue therefore a multiple of factor is found.
+// - isDivisble is false when input isn't divisible by factorValue ; a factor isn't found
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Reset() :
+// - Pre: ressetting inactive object isn't possible
+// - Post: Object is active, numberOfMultiples is set to 0
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Class Invariants
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// The initial state of the object is Active
+// The state transitions to inactive if previousInput = secondInput
+// Reset() can only be called if the state of the object is inactive
+// Reset() immediately sets the object's state to active
+// User can't see the inactive state because reset() takes care of it
+// Constructor takes an integer factorValue as a parameter
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+using System;
+namespace P2
+{
+    public class Factor
+    {
+        private readonly int factorValue;
+        private int numberOfMultiples;
+        private bool isActive;
+        private int secondInput;
+        public const int DIV_ERROR_CODE = 0;
+
+        public Factor(int factorValue)
+        {
+            this.factorValue = factorValue;
+            isActive = true;
+            numberOfMultiples = 0;
+            secondInput = -1;
+        }
+
+        public bool IsActive()
+        {
+            return isActive;
+        }
+
+        public int getSecondInput()
+        {
+            return secondInput;
+        }
+
+ 
+
+        public bool Div(int input)
+        {
+            bool isDivisible;
+            isDivisible = false;
+            if (input == secondInput)
+            {
+                isActive = false;
+                Reset();
+            }
+            else
+            {
+
+                if (input % factorValue == 0)
+                {
+                    numberOfMultiples++;
+                    isDivisible = true;
+
+                }
+                else
+                {
+                    isDivisible = false;
+                }
+                secondInput = input;
+
+            }
+
+            return isDivisible;
+
+        }
+
+        public bool Reset()
+        {
+            if (isActive)
+            {
+                return false;
+            }
+            isActive = true;
+            numberOfMultiples = 0;
+            secondInput = -1;
+            return true;
+        }
+    }
+}
