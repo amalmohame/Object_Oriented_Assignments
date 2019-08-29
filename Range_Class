@@ -1,0 +1,122 @@
+//Name:      Amal Mohamed
+//Date:      April 11, 2019
+//File:      Range.cs
+//Revision:  1.0
+//Platform:  Visual Studio 2017
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Implementation Invariant:
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- Range Class:
+// -Uses exactly two factor objects to identify all pinged values .
+//- Range Class is a subObject of the Factor Class
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- public Range (Factor factorObj1, Factor factorObj2) - (Constructor)
+// - Takes two Factor objects as its parameters factorObj1 and factorObj2
+// - min is set to -10000
+// - max is set to 10000
+// - The object factorObj1 is created
+// - The object factorObj2 is created
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- Ping(userInput)
+// - Uses two Objects factorObj1 and factorObj to identify pinged values
+// - A value is pinged if a value has exactly two factors in common
+//- The two objects factorObj1 and factorObj2 calling the Div Function from the Factor Class are assigned to the boolean isFactor
+//- If the boolean isFactor is true then the pingCount is incremented indicating that a value has been pinged
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//findMinUserInput():
+//- Finds the minimmum userInput for when min = -10000
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//findMaxUserInput()
+//- Finds the maximmum userInput for when max = 10000
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- getMinUserinput()
+//- Returns the minimmum userInput for when min = -10000
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- getMaxUserinput():
+//- Returns the maximmum userInput for when max = 10000
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Class Invariants:
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- Range class uses exactly two objects factorObj1 and factorObj2 to identify all pinged values.
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+namespace P2
+{
+    public class Range
+    {
+        private int pingCount;
+        Factor factorObj1;
+        Factor factorObj2;
+        private int min;
+        private int max;
+
+
+
+        public Range(Factor factorObj1, Factor factorObj2)
+        {
+            this.factorObj1 = factorObj1;
+            this.factorObj2 = factorObj2;
+            pingCount = 0;
+            min = -10000;
+            max = 10000;
+        }
+
+
+
+        public bool ping(int userInput)
+        {
+            bool isFactor = factorObj1.Div(userInput) && factorObj2.Div(userInput);
+            if (isFactor)
+            {
+                pingCount++;
+
+            }
+            return isFactor;
+
+
+        }
+
+        private void findMinUserInput(int userInput)
+        {
+            if (userInput < min)
+            {
+                min = userInput;
+            }
+
+        }
+
+
+
+
+        private void findMaxUserInput(int userInput)
+        {
+            if (userInput > max)
+            {
+                max = userInput;
+            }
+
+        }
+
+        public int getMinUserinput()
+        {
+            return min;
+
+
+        }
+        public int getMaxUserinput()
+        {
+            return max;
+
+
+        }
+
+
+
+    }
+}
