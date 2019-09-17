@@ -1,0 +1,515 @@
+//Name:      Amal Mohamed
+//File:      pwdCheck.cs
+//Date:      4/20/2019
+//Revision:  1.0
+//Platform:  Visual Studio 2017
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Implementaion Variant - Details important only Class Designer
+//                      - Document Design Decisions that are impactful
+//                      - to implemantation choices.
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// pwdCheck()        -Constructor                  
+//  requiredLength  - The required length for the password
+//                  - protected integer set to 5 in the constructor  
+//  isActive        - The state of the object
+//                  - A boolean set to true in the constructor
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// public bool IsActive()
+// - Returns the state of the object
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// protected bool acceptSymbol(string password)
+// - Only accepts passwords that don't have the symbols # & * 
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// protected bool acceptLength(string password)  
+// - Only accepts passwords that have a length >=5 
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// protected bool toggleState()
+// - Toggles the state of the object from inactive to active and from active to inactive .
+// - When the state of the object is inactive the state is toggled to active and the 
+// - requestCount is set to 0. 
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// protected void countRequest()
+// - RequestLimit must equal 3 in order for the state of the object to be toggled.
+// - Calls toggleState() to take care of the toggling
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// public virtual bool checkPswd(string password)
+// - Only accepts passwords that meet the conditions of acceptSymbol(String password) and acceptLength(String password) 
+// - Callls the countRequest() to keep track of the user's requests of entering passwords and toggles the state of the 
+// - object when requestLimit = 3
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Class Invariants
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- This class is the parent of two child classes ;compoundCacts and excessC. When the Object is Active ; password must have a length >= 5 and not have the symbols # & * . 
+//- The state of the object is toggled when the requestLimit = 3
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace p3
+{
+    public class pwdCheck
+    {
+        protected bool isActive;
+        protected const int requestLimit = 3;
+        protected int requestCount;
+        protected int requiredLength;
+        
+        
+
+
+
+        public pwdCheck()
+        {
+            isActive = true;
+            requiredLength = 5;
+
+
+        }
+
+       
+        public bool IsActive()
+        {
+            return isActive;
+
+        }
+
+
+        
+        protected bool acceptSymbol(string password)
+        {
+            bool acceptedSymbol = !password.Contains("#") &&!password.Contains("&") && !password.Contains("*");
+        
+            return acceptedSymbol;
+
+
+        }
+        
+        
+        protected bool acceptLength(string password)
+        {
+            bool acceptedLength = password.Length>= requiredLength;
+ 
+            return acceptedLength;
+
+
+        }
+
+        //Post: State will change when called
+        protected virtual void toggleState()
+        {
+            if (!isActive)
+            {
+                isActive = true;
+                requestCount = 0;
+
+            }
+            else
+            {
+                isActive = false;
+            }
+        }
+
+        //Post: State changes when function is called
+        protected void countRequest()
+        {
+            requestCount++;
+            if(requestCount % requestLimit == 0)
+            {
+                
+                toggleState();
+            }
+        }
+
+
+        //Post: State changes when function is called
+        public virtual bool checkPassword(string password)
+        {
+            bool LengthAccepted = acceptLength(password);
+            bool SymbolAccepted = acceptSymbol(password);
+            countRequest();
+            if (LengthAccepted && SymbolAccepted)
+            {
+                return true;
+
+            }
+            
+            else
+            {
+                return false;
+            }
+            
+        }
+    }
+}
+
+
+
+
+//File:      compoundCacts.cs
+//Date:      4/20/2019
+//Revision:  1.0
+//Platform:  Visual Studio 2017
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Implementaion Variant - Details important only Class Designer
+//                      - Document Design Decisions that are impactful
+//                      - to implemantation choices.
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// protected bool isDuplicate(string password)
+// - Only accepts passwords that have duplicate characters
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// public override bool checkPassword(string password)
+// - Behaves like it's parent pwdCheck  except that the password must have duplicates
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// protected override void toggleState()
+//- Behaves like it's parent pwdCheck except that it can't toggle the state of the object more than 3 times
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Class Invariants
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- Acts like its parent pwdCheck except that the pasword must have a duplicate charater and can't toggle the state
+//- of the object more than 3 times
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+using System;
+namespace p3
+{
+    public class compoundCacts : pwdCheck
+    {
+        private const int toggleLimit = 3;
+        private int toggleCount = 0;
+
+     
+
+        protected bool isDuplicate(string password)
+        {
+          for(int i = 0; i<password.Length; i++)
+            { 
+                for(int j = 0; j< password.Length; j++)
+                {
+                    if(i== j)
+                    {
+                        continue;
+                       
+                    }
+                    if(password[i]== password[j])
+                    {
+                        return true;
+                    }
+               }
+
+            }
+            return false;
+
+            }
+
+
+
+
+
+        //Post: State will change when called
+        public override bool checkPassword(string password)
+        {
+            bool actLikePwdCheck = base.checkPassword(password);
+            if (actLikePwdCheck)
+            {
+                return !isDuplicate(password);
+                
+
+            }
+            return actLikePwdCheck;
+
+
+        }
+
+        //Post: State will change when called
+        protected override void toggleState()
+        {
+            
+            if(toggleCount<toggleLimit)
+            {
+                base.toggleState();
+                toggleCount++;
+
+            }
+
+
+        }
+
+
+    }
+}
+
+//File:      excessC.cs
+//Date:      4/20/2019
+//Revision:  1.0
+//Platform:  Visual Studio 2017
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Implementaion Variant -Details important only Class Designer
+//                      -Document Design Decisions that are impactful
+//                      -to implemantation choices.
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// protected bool isUperCase(string password) 
+// - Only accepts passwords that have an uppercase letter
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// protected bool isLowerCase(string password) 
+// - Only accepts passwords that have an lowercase letter
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// protected bool isDigit(string password) 
+// - Only accepts passwords that have a digit
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// protected isDollarSignSymbol()
+// - Only accepts passwords that have a $ 
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// public override bool checkPassword(string password)
+// - Refer to the parent pwdCheck checkPassword(string password) for behavior when inactive
+// - When it's active password must have a lower case letter, upper case letter, digit , and $ 
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Class Invariant
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// - When the object is inactive, refer to the parent pwd check
+// - When the object is active the password must be case mixed, have a digit, 
+//-  and have a $.
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+using System.Linq;
+using System;
+namespace p3
+{
+    public class excessC : pwdCheck
+    {
+       
+        public bool isUpperCase(string password)
+        {
+            bool isUpperCase = password.Any(char.IsUpper);
+            return isUpperCase;
+        }
+        
+        
+        protected bool isLowerCase(string password)
+        {
+            bool isLowerCase = password.Any(char.IsLower);
+            return isLowerCase;
+
+        }
+
+
+         
+        protected bool isDigit(string password)
+        {
+            bool isDigit = password.Any(char.IsDigit);
+            return isDigit;
+
+        }
+
+         
+        protected bool hasDollarSignSymbol(string password)
+        {
+            bool isDollarSignSymbol = password.IndexOfAny("$".ToCharArray()) != -1;
+            return password.IndexOfAny("$".ToCharArray())!= -1;
+        }
+
+
+
+        //Post: State will change when called
+        public override bool checkPassword(string password)
+        {
+            bool ExcessCIsOff = !isActive;
+            if (ExcessCIsOff)
+            {
+                return base.checkPassword(password);
+               
+            }
+            else
+            {
+                bool ExcessIsOn=isUpperCase(password)&&isLowerCase(password)&&isDigit(password)&&hasDollarSignSymbol(password);
+                countRequest();
+                return ExcessIsOn;
+
+            }
+
+            
+        }
+    }
+}
+
+//File:      P3.cs
+//Date:      4/20/2019
+//Revision:  1.0
+//Platform:  Visual Studio 2017
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Interface Variant
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//-  details important primarliy for client
+//-  document design decisions that impact public use of functionality
+//-  Description and Explanation of the process performed by the program :
+//   - This program has three classes pwdCheck,compoundCacts,and excessC.
+//   - pwdCheck is the parent to compoundCacts and excessC. The user 
+//   - interacts with the program through a heterogenous array 
+//   - passwordQuery and string array arrayOfPasswords 
+//   - that test the validity of the public functions of 
+//   - the parent class pwdCheck .
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Explanation of user interface (input meaning of input)
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// - The user begins to interact with the pwdCheck class. While querying the pwdCheck class the user can  query if their password meets the length and symbol requirement
+// - while the object is active. The length requiremnt is the password must have a length >= 5 and can't contain the symbols * & # . User can query if the toggling occurs when they
+// - request a password three times by passing a password into the string[] arrayOfPasswords and testing the checkPasswordQuery(arrayOfPasswords, passwordQuery)
+// - The user then interacts with the compoundCacts class .While querying the compoundCacts class the user can query if their password meets the pwdCheck class requiremnts for a 
+// - password & has duplicates , and query if the the toggleLimit is met while querying the isActive. User can't toggle the state of the object more than 3 times. The user then 
+// - interacts with the excessC class .While querying the excessC class the user can query if their password meets the constraints of the pwdCheck class when the object is inactive 
+// - and query if it meets the following the constraints ; contianing an  uppercase ,lowercase letter,a digit and a dollar sign.
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- Comments on use and Validity (error processing)
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//- PwdCheck Class rejects passwords that havea length<5 and the symnols : * & #
+//- excessC class rejects passwords that don't have a lower case letter, upper case letter, digit , and $ when it's active
+//       - When the excessC object it is inactive (refer to the pwdCheck class)
+//- compoundCacts class rejects password without duplicates ,dosen't let the user toggle more than 3 times
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// pwdCheck Public Functions
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// pwdCheck()        -Constructor                  
+//  requiredLength  - The required length for the password
+//                  - protected integer set to 5 in the constructor  
+//  isActive        - The state of the object
+//                  - A boolean set to true in the constructor
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// public bool IsActive()
+// - Returns the state of the object
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// public virtual bool checkPswd(string password)
+// - Only accepts passwords that meet the conditions of acceptSymbol(String password) and acceptLength(String password) 
+// - Callls the countRequest() to keep track of the user's requests of entering passwords and toggles the state of the 
+// - object when requestLimit = 3
+// - Calls toggleState() to take care of the toggling
+
+
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// compoundCacts Public Functions
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// public override bool checkPassword(string password)
+// - Refer to parent pwdCheck 
+// - password must have duplicates
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// excessC Public Functions
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// public override bool checkPassword(string password)
+//- Refer to the parent pwdCheck checkPassword(string password) for behavior when inactive
+//- When it's active password must have a lower case letter, upper case letter, digit , and $ 
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Driver Functions
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//checkPasswordQuery([]string arrayOfPasswords, pwdCheck[] passwordQuery )
+//- Tests the checkPasword for all three classes pwdCheck,compoundCacts, and excessC using a string array of passwords and a heterogeneous array
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//TriggeringIsActive(string[] arrayOfPasswords, pwdCheck[] passwordQuery)- 
+//- Tests the state of all three classes;pwdCheck,compoundCacts, and excessC using a string array of passwords and a heterogeneous array
+//- Also calls the checkPassword function to show test the relationship between checkPassword and isActive for excessC and pwdCheck
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+using System;
+namespace p3
+{
+    class Program
+    {
+        const int ARRAY_SIZE = 3;
+     
+        
+
+        public static void Main(string[] args)
+        {
+            string[] arrayOfPasswords = { "PerryWhite", "Lion", "#iowa", "larry&", "*hogwarts", "8larr", "$5JohnKool", "&Dogs", "#AmalKool","yes78" ,"Dogworld","AmalReally","PrattLee45"};
+            Console.WriteLine("Welcome to my user Interface");
+            createPasswordArray(arrayOfPasswords);
+            pwdCheck[] passwordQuery= createPaswordQueryArray();
+            Console.WriteLine();
+            checkPasswordQuery(arrayOfPasswords, passwordQuery);
+            TriggeringIsActive(arrayOfPasswords, passwordQuery);
+            Console.WriteLine();
+            Console.WriteLine("GoodBye Thank you for looking at my program");
+
+        }
+
+        public static void createPasswordArray(string[] arrayOfPasswords)
+        {
+            Console.WriteLine("Here are my array of Passwords");
+            Console.WriteLine();
+            foreach (string s in arrayOfPasswords)
+            {
+                Console.WriteLine(s);
+
+            }
+            
+
+        }
+
+
+
+        public static pwdCheck[] createPaswordQueryArray()
+        {
+            pwdCheck[] passwordQuery = new pwdCheck[ARRAY_SIZE];
+            pwdCheck passwordObj = new pwdCheck();
+            passwordQuery[0] = (passwordObj);
+            compoundCacts compoundObj = new compoundCacts();
+            passwordQuery[1] = (compoundObj);
+            excessC excessObj = new excessC();
+            passwordQuery[2] = (excessObj);
+
+            return passwordQuery;
+        }
+
+
+        public static void checkPasswordQuery(string[] arrayOfPasswords, pwdCheck[] passwordQuery)
+        {
+
+            Console.WriteLine("Testing checkPassword for all three classes ; pwdCheck,compoundCacts,excessC");
+            for (int i = 0; i < passwordQuery.Length; i++)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Testing Object " + i);
+                foreach (string s in arrayOfPasswords)
+                {
+                    Console.WriteLine("checkPassword(" + s + ")returns->" + passwordQuery[i].checkPassword(s));
+                    Console.WriteLine();
+                }
+            }
+        }
+
+
+
+        public static void TriggeringIsActive(string[] arrayOfPasswords, pwdCheck[] passwordQuery)
+        {
+            Console.WriteLine("Testing Is Active for all three classes; pwdCheck,coumpoundCacts,excessC");
+            for (int i = 0; i < passwordQuery.Length; i++)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Testing Object "+i);
+                foreach (string s in arrayOfPasswords)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("IsActive()returns->" + passwordQuery[i].IsActive());
+                    Console.WriteLine();
+                    Console.WriteLine("checkPassword(" + s + ")returns->" + passwordQuery[i].checkPassword(s));
+                    Console.WriteLine();
+                }
+
+            }
+        }
+    }
+        }
+
